@@ -3,73 +3,115 @@
 
 typedef struct node
 {
-    int item;
+    int number;
     struct node *next;
 } node;
 
-node *add(node *head, int item)
-{
-    node *novo = (node *)malloc(sizeof(node));
-    novo->item = item;
-    novo->next = NULL;
-    if (head == NULL)
-    {
-        return novo;
-    }
-    node *aux = head;
-    while (aux->next != NULL)
-    {
-        aux = aux->next;
-    }
-    aux->next = novo;
-    return head;
-}
-int zeros(node *head)
-{
-    int cont = 0;
-    while (head != NULL && head->item == '0')
-    {
-        cont++;
-        head = head->next;
-    }
-    return cont;
-}
-int *maiorsequencia(node *head)
-{
-    int inicial = 0;
-    int final = 0;
-    int sequencia = 0;
-    int i;
-    for (i = 0; head != NULL; i++)
-    {
-        sequencia = zeros(head);
-        if (final - inicial <= sequencia)
-        {
-            inicial = i;
-            final = i + sequencia;
-        }
-        head = head->next;
-    }
-    int *resultado = malloc(2 * (sizeof(int)));
-    resultado[0] = inicial;
-    resultado[1] = final;
-    return resultado;
-}
+node *load();
+void unload(node *head);
+void bubbleSort(node *head);
+void print(node *head);
+
 int main()
 {
-    node *head = NULL;
-    char item[2000];
-    int *resultado;
-    while (scanf("%s ", item))
-    {
-        if (strlen(item) == 1 && item[0] == '0')
-            break;
+    node *list = load();
 
-        for (i = 0; i < strlen(item); i++)
+    bubbleSort(list);
+
+    print(list);
+}
+
+node *load()
+{
+    node *head = malloc(sizeof(node)); //Aloca a cabeça da lista
+
+    scanf("%d", &head->number); //Carrega o primeiro valor na cabeça da lista
+    head->next = NULL;
+
+    int buffer;
+
+    // Lê o restante dos valores e insere no começo da lista
+    while (scanf("%d", &buffer) != EOF)
+    {
+        node *new_node = malloc(sizeof(node));
+        if (new_node == NULL) // Checa se conseguiu alocar memoria
         {
-            head = add(head, item[i]);
+            unload(head);
+            printf("Error allocating memory for new node!");
         }
-        resultado = maiorsequencia(head);
-        printf("%d %d",resultado[0],resultado[1]);
+
+        new_node->number = buffer;
+
+        // Insere novo nó na lista
+        new_node->next = head;
+        head = new_node;
     }
+
+    return head;
+}
+
+// Função para liberar a memória
+void unload(node *head)
+{
+    // Ponteiro temporário para armazenar o ponteiro do nó a ser liberado
+    node *tmp;
+
+    // Loop que libera a memória
+    while (head != NULL)
+    {
+        tmp = head->next;
+
+        free(head);
+
+        head = tmp;
+    }
+}
+
+void swap(node *a, node *b)
+{
+    int temp = a->number;
+    a->number = b->number;
+    b->number = temp;
+}
+
+// Função para ordenar as listas
+void bubbleSort(node *head)
+{
+    int swapped;
+    node *headcopy;
+    node *buffer = NULL;
+
+    // Verificando se a lista não está vazia.
+    if (head == NULL)
+        return;
+
+    // Usando BubbleSort para ordenar.
+    do
+    {
+        swapped = 0;
+        headcopy = head;
+
+        while (headcopy->next != buffer)
+        {
+            if (headcopy->number > headcopy->next->number)
+            {
+                swap(headcopy, headcopy->next);
+                swapped = 1;
+            }
+            headcopy = headcopy->next;
+        }
+        buffer = headcopy;
+    } while (swapped);
+}
+
+void print(node *head)
+{
+    node *current_node = head;
+    while (current_node != NULL)
+    {
+        printf("%d ", current_node->number);
+
+        current_node = current_node->next;
+    }
+    printf("\n");
 }
