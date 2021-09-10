@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define N 10
+#define N 10000
 
 typedef struct node
 {
@@ -10,8 +10,8 @@ typedef struct node
     struct node *next;
 } node;
 
-void push(node *stack, int *array);
-void pop(node *stack);
+node *push(node *stack);
+node *pop(node *stack);
 
 int main()
 {
@@ -24,42 +24,42 @@ int main()
     {
         if (strcmp(control, "PUSH") == 0)
         {
-            int array[N], i = 0, n;
-
-            while (scanf("%d", n))
-            {
-                array[i] = n;
-
-                i++;
-            }
-            push(stack, array);
+            stack = push(stack);
         }
         else
         {
-            pop(stack);
+            stack = pop(stack);
         }
-        
     }
 
     return 0;
 }
 
-void push(node *stack, int *array)
+node *push(node *stack)
 {
     node *newNode = malloc(sizeof(node));
+    int n, i = 0;
 
-    memcpy(newNode->numbers, array, N * sizeof(int));
+    while (scanf("%d", &n))
+    {
+        newNode->numbers[i] = n;
+
+        i++;
+    }
+    newNode->numbers[i] = -1;
 
     newNode->next = stack;
     stack = newNode;
+
+    return stack;
 }
 
-void pop(node *stack)
+node *pop(node *stack)
 {
     if (stack == NULL)
     {
-        printf("EMPTY STACK");
-        return;
+        printf("EMPTY STACK\n");
+        return NULL;
     }
     else
     {
@@ -79,4 +79,5 @@ void pop(node *stack)
 
         free(temp);
     }
+    return stack;
 }
